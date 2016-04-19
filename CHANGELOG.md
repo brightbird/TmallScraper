@@ -1,53 +1,4 @@
-# TmallScraper
-====
-* Project Name:
-  * TmallScraper
-  
-* Version:
-  * 4.2
-  
-* Python version
-  * 2.7.9
-  
-* Author：
-  * Guo Zhang
-  * Xingjian Lin
-  
-* Description: 
-  * This is a Tmall scraper for China's Prices Project
-  
-* Structure:
-  * 主函数：（安装Python2.7.9后，双击打开即可）tmallScraper.py
-
-  * 主模块：
-    * tmallScraper.py 分类列表下所有分类的函数
-    * tmallCategoryScraper.py 单个分类的函数
-    * categories.py 分类列表
-    * scraperHeaders.py HTTP请求头
-    * ipProxiesList(checked),proxiesList(not checked) IP列表文件
-
-  * 辅助模块（proxiesPool文件夹）：
-    * getIP_xici.py 从西刺网获取代理IP（生成‘proxiesList文件’）
-    * ipCheck.py 检测代理IP（生成‘ipProxiesList’文件）
-  
----
-
-# REQUIREMENT
-====
-* 生成requirements.txt：
-  * 1. 在文件夹下打开命令窗(shift+右键)
-  * 2. 输入命令： 
-    * pip freeze>requirements.txt
-
-
-* 使用requirements.txt：
-  * 1. 在文件夹下打开命令窗(shift+右键)
-  * 2. 输入命令： 
-    * pip install -r requirements.txt
-
----
-
-# CHANGELOG
+CHANGELOG
 ====
 * Version 4.2：2016-4-19
   * 主模块tmallCategoryScraper.py：修改参数传入，把URL参数改为可选参数传入
@@ -106,7 +57,7 @@
 
   * 主模块（整体）：
     * tmallScraper.py 分类列表下所有分类的函数
-    * tmallCategoryScraper.py 单个分类的函数
+    * (tmallCategoryScraper.py 单个分类的函数
     * categories.py 分类列表
     * scraperHeaders.py HTTP请求头
     * ip_proxies_list IP列表文件
