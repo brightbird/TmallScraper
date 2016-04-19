@@ -4,7 +4,10 @@
   * TmallScraper
   
 * Version:
-  * 4.2
+  * 4.2.1
+  
+* Date:
+  * 2016-4-19
   
 * Python version
   * 2.7.9
@@ -49,6 +52,9 @@
 
 # CHANGELOG
 ====
+* Version 4.2.1：2016-4-19
+  * 修改细节
+  
 * Version 4.2：2016-4-19
   * 主模块tmallCategoryScraper.py：修改参数传入，把URL参数改为可选参数传入
   
