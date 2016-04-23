@@ -11,7 +11,7 @@ __author__ = 'Guo Zhang'
 
 __date__ = '2016-4-19'
 
-__moduleVersion__ = '6.0'
+__moduleVersion__ = '6.1'
 
 __doc__ = '''
 This is a tmall category scarper,
@@ -60,11 +60,14 @@ class ScraperProducer(object):
         self.totalPages = self.getTotalPageNumber()
     
     def getParameter(self,urlParameter):
-        parameters = ''
-        for parameterTuple in urlParameter.items():
-            addedParameter = ''.join([parameterTuple[0],'=',parameterTuple[1]])
-            parameters = '&'.join([parameters,addedParameter])
-        return parameters
+        try:
+            parameters = ''
+            for parameterTuple in urlParameter.items():
+                addedParameter = ''.join([parameterTuple[0],'=',parameterTuple[1]])
+                parameters = '&'.join([parameters,addedParameter])
+            return parameters
+        except Exception:
+            return None
               
     def createFile(self):
         'Create file and its name for a certain page'
@@ -128,7 +131,7 @@ class ScraperProducer(object):
         try:
             r = requests.get(self.categoryURL,headers)
         except (requests.exceptions.ConnectionError,requests.exceptions.ReadTimeout):
-            print('connect error:',(self.categoryName).encode('utf-8'))
+            print('connect error:',(self.categoryName).encode('utf-8'),',',(self.parameters).encode('utf-8'),',',(self.categoryURL).encode('utf-8'))
             return None
         return r.content
     
@@ -147,7 +150,7 @@ class ScraperProducer(object):
             pageNumber = p_ui.find('b',attrs={'class':'ui-page-s-len'}).getText().split('/')[1]
             return int(pageNumber)                                  
         except Exception:
-            print('fail to get page number:',(self.categoryName).encode('utf-8'))
+            print('fail to get page number:',(self.categoryName).encode('utf-8'),',',(self.parameters).encode('utf-8'),',',(self.categoryURL).encode('utf-8'))
             return None
 
 

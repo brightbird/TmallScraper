@@ -4,10 +4,7 @@
   * TmallScraper
   
 * Version:
-  * 4.2.1
-  
-* Date:
-  * 2016-4-19
+  * 4.3.1
   
 * Python version
   * 2.7.9
@@ -24,6 +21,7 @@
 
   * 主模块：
     * tmallScraper.py 分类列表下所有分类的函数
+    * catPara.py 加工传入tmallScraper.py的参数
     * tmallCategoryScraper.py 单个分类的函数
     * categories.py 分类列表
     * scraperHeaders.py HTTP请求头
@@ -35,7 +33,7 @@
   
 ---
 
-# REQUIREMENT
+## REQUIREMENT
 ====
 * 生成requirements.txt：
   * 1. 在文件夹下打开命令窗(shift+右键)
@@ -50,10 +48,17 @@
 
 ---
 
-# CHANGELOG
+## CHANGELOG
 ====
-* Version 4.2.1：2016-4-19
-  * 修改细节
+* Version 4.4：2016-4-22
+  * 重写线程池
+  * 增加catPara.py模块，加工传入tmallScraper的参数
+  
+* Version 4.3.1： 2016-4-22
+  * 修复tmallScraper.py文件的变量命名的bug
+  
+* Version 4.3: 2016-4-21
+  * 加入邮件模块
   
 * Version 4.2：2016-4-19
   * 主模块tmallCategoryScraper.py：修改参数传入，把URL参数改为可选参数传入
