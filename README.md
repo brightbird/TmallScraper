@@ -4,7 +4,7 @@
   * TmallScraper
   
 * Version:
-  * 4.3.1
+  * 4.4
   
 * Python version
   * 2.7.9
