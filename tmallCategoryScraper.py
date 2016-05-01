@@ -3,6 +3,7 @@
 from __future__ import print_function,unicode_literals
 
 
+
 #----------module document----------
 
 __pyVersion__ = '2.7.9'
@@ -11,7 +12,7 @@ __author__ = 'Guo Zhang'
 
 __date__ = '2016-4-19'
 
-__moduleVersion__ = '6.1'
+__moduleVersion__ = '6.2'
 
 __doc__ = '''
 This is a tmall category scarper,
@@ -38,103 +39,33 @@ from bs4 import BeautifulSoup
 # import my own module
 from scraperHeaders import USER_AGENT_LIST,PROXIES
 from re_match import deal_sales
+from getParameter import getParameter
+from createFile import createFile
+from unparseURL import unparseURL
+from getPageHTML import getPageHTML 
+from getTotalPageNumber import getTotalPageNumber  
 
 #----------module import----------
 
 
 #----------class definition----------
 
-class ScraperProducer(object):
-    'Produce HTMLs for the Tmall scraper'
+class PageScraper(object):
+    'a page scraper for the Tmall scraper'
     
     def __init__(self,categoryName,pageNum = 1,**urlParameter):
         'Define attributes for ScraperProducer'
         
         self.presentDay = str(time.strftime('%Y-%m-%d',time.localtime(time.time())))
+        self.presentTime = str(time.strftime('%H-%M-%S',time.localtime(time.time())))
+        self.logTime = '[{} {}]'.format(self.presentDay,str(time.strftime('%H:%M:%S',time.localtime(time.time()))))
+
         self.categoryName = categoryName
-        self.parameters = self.getParameter(urlParameter)
         self.pageNum = pageNum
-        self.fileName = self.createFile()
-        self.categoryURL = self.unparseURL((pageNum-1)*60)
-        self.html = self.getPageHTML()
-        self.totalPages = self.getTotalPageNumber()
-    
-    def getParameter(self,urlParameter):
-        try:
-            parameters = ''
-            for parameterTuple in urlParameter.items():
-                addedParameter = ''.join([parameterTuple[0],'=',parameterTuple[1]])
-                parameters = '&'.join([parameters,addedParameter])
-            return parameters
-        except Exception:
-            return None
-              
-    def createFile(self):
-        'Create file and its name for a certain page'
+        self.parameters = getParameter(**urlParameter)
+        self.pageURL = unparseURL(categoryName,self.parameters,(pageNum-1)*60)
+        self.html = getPageHTML(self.pageURL)
         
-        # check or create a daily dictionary
-        dictionaryName = u'TmallData_' + self.presentDay
-        try:
-            os.makedirs(dictionaryName)
-        except OSError, e:
-            if e.errno != 17:
-                raise(e)
-            
-        # create a file and its name for a certain page
-        if self.parameters:
-            fileName = ''.join([dictionaryName,'/','tmallPrice','_',self.presentDay,'_',self.categoryName,'_',self.parameters,'_',str(self.pageNum)])
-        else:
-            fileName = ''.join([dictionaryName,'/','tmallPrice','_',self.presentDay,'_',self.categoryName,'_',str(self.pageNum)])
-        
-        # write the first line
-        with codecs.open(fileName,'wb',) as f:
-            writer = csv.writer(f)
-            writer.writerow(('presentDay','presentTime','goodsURL','goodsName','shopURL','shopName','price','price_ave','monthly_sales','comments'))
-      
-        return fileName
-    
-    def unparseURL(self,s=0):
-        'Create the page URL'
-        
-        try:
-            urlFirst = u'http://list.tmall.com/search_product.htm?'
-            query = ''.join([u'&s=',str(s),u'&q=',self.categoryName,u'&sort=d']) 
-            categoryURL = ''.join([urlFirst,query,self.parameters])
-            return categoryURL
-        except Exception:
-            print('unparsing URL error:',(self.categoryName).encode('utf-8'),(self.pageNum).encode('utf-8'))
-            return None
-    
-    def getPageHTML(self):
-        'Request for the HTML of a certain page'
-        
-        # request head
-        userAgent = random.choice(USER_AGENT_LIST)
-        proxies = random.choice(PROXIES)
-        headers = {
-    ':host':'list.tmall.com',
-    ':method':'GET',
-    ':path':self.categoryURL,
-    ':scheme':'https',
-    ':version':'HTTP/1.1',
-    'accept':'text/html',
-    'accept-encoding':'gzip,deflate',
-    'accept-language':'zh-CN,zh;q=0.8',
-    'cache-control':'max-age=0',
-    #'cookie':cookie,
-    'referer':'https://list.tmall.com',
-    'user-agent':userAgent,
-    'http':proxies,
-    }
-        
-        # request for the HTML
-        try:
-            r = requests.get(self.categoryURL,headers)
-        except (requests.exceptions.ConnectionError,requests.exceptions.ReadTimeout):
-            print('connect error:',(self.categoryName).encode('utf-8'),',',(self.parameters).encode('utf-8'),',',(self.categoryURL).encode('utf-8'))
-            return None
-        return r.content
-    
     def getTotalPageNumber(self):
         'Get total page number for a certain category'
         
@@ -150,27 +81,16 @@ class ScraperProducer(object):
             pageNumber = p_ui.find('b',attrs={'class':'ui-page-s-len'}).getText().split('/')[1]
             return int(pageNumber)                                  
         except Exception:
-            print('fail to get page number:',(self.categoryName).encode('utf-8'),',',(self.parameters).encode('utf-8'),',',(self.categoryURL).encode('utf-8'))
+            print(self.logTime,',fail to get page number:',(self.pageURL).encode('utf-8'))
             return None
-
-
-class ScraperConsumer(object):
-    'Consume HTMLs for the Tmall scraper'
     
-    def __init__(self,html,categoryName,fileName):
-        'Define attributes for ScraperProducer'
-        
-        self.presentDay = str(time.strftime('%Y-%m-%d',time.localtime(time.time())))
-        self.presentTime = str(time.strftime('%H:%M:%S',time.localtime(time.time()))) # the time of writing into .csv files
-        self.html = html
-        self.categoryName = categoryName
-        self.fileName = fileName
-        
     def parsePageHTML(self):
         'Parse the HTML'
         
         if self.html == None:
             return None
+        
+        fileName = createFile(self.presentDay,self.presentTime,self.categoryName,self.parameters,self.pageNum)
     
         # parse the HTML
         try:
@@ -178,10 +98,10 @@ class ScraperConsumer(object):
             div_content = soup.body.find('div',attrs={'class':'page'}).find('div',attrs={'class':'content'})
             products = soup.find_all('div',attrs={'class':'product-iWrap'})
             if products == None:
-                print('parse error:',(self.fileName).encode('utf-8'))
+                print(self.logTime,',parse error:',(fileName).encode('utf-8'))
                 return None
         except Exception:
-            print('parse error:',(self.fileName).encode('utf-8'))
+            print(self.logTime,',parse error:',(fileName).encode('utf-8'))
         
         # parse the data
         __i__ = 1
@@ -247,15 +167,15 @@ class ScraperConsumer(object):
 
             # write the data
             try:
-                with codecs.open(self.fileName,'ab') as f:
+                with codecs.open(fileName,'ab') as f:
                     writer = csv.writer(f)
-                    writer.writerow((self.presentDay,self.presentTime,goodsURL,goodsName,shopURL,shopName,price,price_ave,monthly_sales,comments))
+                    writer.writerow((goodsURL,goodsName,shopURL,shopName,price,price_ave,monthly_sales,comments))
             except:
                 __i__ = 0
         
         # print write error
         if __i__ == 0:        
-            print('write error:',(self.fileName).encode('utf-8'))
+            print(self.logTime,',write error:',(fileName).encode('utf-8'))
 
 #----------class definition----------
 
@@ -265,29 +185,26 @@ class ScraperConsumer(object):
 def tmallPageScraper(categoryName,page=1,**urlParameter):
     'A scraper for a certain page of a certain category'
     
-    # produce the HTML
-    scraperPro = ScraperProducer(categoryName,page,**urlParameter)
-    fileName = scraperPro.fileName
-    categoryURL = scraperPro.categoryURL
-    html = scraperPro.html
-    totalPages = scraperPro.totalPages
+    # produce the html
+    scraper = PageScraper(categoryName,page,**urlParameter)
+    # consume the html
+    scraper.parsePageHTML()
     
-    # consume the HTML
-    scraperCon = ScraperConsumer(html,categoryName,fileName)
-    scraperCon.parsePageHTML()
-    
-    return totalPages
+    return scraper.totalPages
 
 
 def tmallCategoryScraper(categoryName,**urlParameter):
     'A scraper for a certain category'
     
-    number = tmallPageScraper(categoryName,**urlParameter) 
+    scraper = PageScraper(categoryName,**urlParameter)
+    scraper.parsePageHTML()
+    number = scraper.getTotalPageNumber()
     if number:
         #print('%s: page 1'%(categoryName))
         number += 1
         for i in xrange(2,number):
-            tmallPageScraper(categoryName,page=i,**urlParameter)
+            scraper = PageScraper(categoryName,i,**urlParameter)
+            scraper.parsePageHTML()
             #print('%s: page %d'%(categoryName,i))
             
 #----------function definition----------
