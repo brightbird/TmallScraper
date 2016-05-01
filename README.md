@@ -1,55 +1,54 @@
 # TmallScraper
-====
-* Project Name:
-  * TmallScraper
+===
+===
+## Project Document
+ * Project Name: TmallScraper
+ * Version: 5.1
+ * Author：Guo Zhang
+ * Contributor: Xingjian Lin
+ * Data: 2016-05-01
+ * Python version: 2.7.9 
+ * Description: This is a Tmall scraper for China's Prices Project
   
-* Version:
-  * 4.4
-  
-* Python version
-  * 2.7.9
-  
-* Author：
-  * Guo Zhang
-  * Xingjian Lin
-  
-* Description: 
-  * This is a Tmall scraper for China's Prices Project
-  
-* Structure:
-  * 主函数：（安装Python2.7.9后，双击打开即可）tmallScraper.py
+---  
+## Project Structure
+===
+  * tmallScraper.py (Main function)
+    * scraperThreadPool (a thread pool for a scraper)
+      * catPara.py (deal with parameters to the scraper function)
+    * tmallCategoryScraper.py (a category scraper)
+      * getParameter.py (unparse parameters for a URL)
+      * createFile.py (create a file name for a page)
+      * unparseURL.py (create URL for requests)
+      * ipProxiesList, proxiesList (IP proxies pool)
+    * categories.py (the categories required to be scrapered)
+    
+  * tmallTest
+    * countData.py(count data, including category number,parameters number and file number) -> stat/ 
+    * tmallListTest.py(test parameter groups) -> categoriesTest
 
-  * 主模块：
-    * tmallScraper.py 分类列表下所有分类的函数
-    * catPara.py 加工传入tmallScraper.py的参数
-    * tmallCategoryScraper.py 单个分类的函数
-    * categories.py 分类列表
-    * scraperHeaders.py HTTP请求头
-    * ipProxiesList(checked),proxiesList(not checked) IP列表文件
-
-  * 辅助模块（proxiesPool文件夹）：
-    * getIP_xici.py 从西刺网获取代理IP（生成‘proxiesList文件’）
-    * ipCheck.py 检测代理IP（生成‘ipProxiesList’文件）
-  
----
-
-## REQUIREMENT
-====
-* 生成requirements.txt：
-  * 1. 在文件夹下打开命令窗(shift+右键)
-  * 2. 输入命令： 
-    * pip freeze>requirements.txt
-
-
-* 使用requirements.txt：
-  * 1. 在文件夹下打开命令窗(shift+右键)
-  * 2. 输入命令： 
-    * pip install -r requirements.txt
+  * proxiesPool
+    * getIP_xici.py (get IP proxies from xicidaili)-> proxiesList
+    * ipChecker.py (check IP proxies)-> ipProxiesList
+ 
+  * requirements
+    * requests,bs4
 
 ---
 
 ## CHANGELOG
 ====
+* Version 5.1: 2016-4-30
+  * 重构邮件模块
+  * 增加logTime，便于排错
+  * 重构Tmall脚本
+
+* Version 5.0: 2016-4-24
+  * 重构程序
+  * 增加辅助统计数据模块
+  * 增加辅助测试list模块
+  * 增加辅助测试函数模块
+  
 * Version 4.4：2016-4-22
   * 重写线程池
   * 增加catPara.py模块，加工传入tmallScraper的参数
