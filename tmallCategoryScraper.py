@@ -12,7 +12,7 @@ __author__ = 'Guo Zhang'
 
 __date__ = '2016-4-19'
 
-__moduleVersion__ = '6.2'
+__moduleVersion__ = '6.3'
 
 __doc__ = '''
 This is a tmall category scarper,
@@ -106,6 +106,11 @@ class PageScraper(object):
         # parse the data
         __i__ = 1
         for product in products:
+            
+            try:
+                goodsID = product.find('p',attrs = {'class':'productStatus'}).find_all('span')[-1]['data-item']
+            except:
+                goodsID = None
            
             try:
                 goodsURL = product.find('div',attrs={'class':'productImg-wrap'}).find('a')['href']
@@ -169,7 +174,7 @@ class PageScraper(object):
             try:
                 with codecs.open(fileName,'ab') as f:
                     writer = csv.writer(f)
-                    writer.writerow((goodsURL,goodsName,shopURL,shopName,price,price_ave,monthly_sales,comments))
+                    writer.writerow((goodsID,goodsURL,goodsName,shopURL,shopName,price,price_ave,monthly_sales,comments))
             except:
                 __i__ = 0
         
@@ -215,10 +220,10 @@ def tmallCategoryScraper(categoryName,**urlParameter):
 if  __name__ == '__main__':
     print('-'*40)
     begin = time.time()
-    #categoryName = u'笔记本电脑'
-    #catNum = u'50024399'
-    categoryName = u'酱油' #u'%BD%B4%D3%CD'
-    urlParameter = {'cat':u'50099300'}
+    categoryName = u'笔记本电脑'
+    urlParameter = {'cat':'50024399'}
+    #categoryName = u'酱油' #u'%BD%B4%D3%CD'
+    #urlParameter = {'cat':u'50099300'}
     #tmallPageScraper(categoryName,**urlParameter)
     tmallCategoryScraper(categoryName,**urlParameter)
     print('finish:',categoryName.encode('utf-8'))

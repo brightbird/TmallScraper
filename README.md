@@ -3,10 +3,10 @@
 ===
 ## Project Document
  * Project Name: TmallScraper
- * Version: 5.1
+ * Version: 5.1.1
  * Author：Guo Zhang
  * Contributor: Xingjian Lin
- * Data: 2016-05-01
+ * Data: 2016-05-03
  * Python version: 2.7.9 
  * Description: This is a Tmall scraper for China's Prices Project
   
@@ -38,9 +38,12 @@
 
 ## CHANGELOG
 ====
+* Version 5.1.1: 2016-5-3
+  * 数据项目增加goodsID
+  
 * Version 5.1: 2016-4-30
   * 重构邮件模块
-  * 增加logTime，便于排错
+  * tmallCategoryScraper的PageScraper类增加logTime属性，便于排错
   * 重构Tmall脚本
 
 * Version 5.0: 2016-4-24
